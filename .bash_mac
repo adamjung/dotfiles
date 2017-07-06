@@ -8,6 +8,14 @@ alias flushdns='sudo dscacheutil -flushcache'
 alias SaveScreen='/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine'
 alias updatedb='sudo /usr/libexec/locate.updatedb'
 alias gg='git grep -n --color --heading --break'
+alias ga='git add .'
+alias gst='git status'
+alias gcm='git commit -m'
+alias gacm='git add . && git commit -m'
+alias gp='git pull'
+alias gmm='git merge master'
+alias gcb='git checkout -b'
+alias gco='git checkout'
 alias tmux="TERM=screen-256color-bce tmux"
 export TERM="xterm-256color"
 alias t="bundle exec rspec --color"
@@ -15,7 +23,6 @@ alias dk="docker-compose"
 alias pidawk="awk '{print \$2}'"
 alias v='pbpaste | vim -'
 export FZF_DEFAULT_COMMAND='ag -g ""'
-
 
 ##################################################
 # path adjustments
