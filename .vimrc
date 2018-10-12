@@ -37,7 +37,7 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'vim-scripts/LanguageTool'
 Plug 'vim-scripts/fountain.vim'
 Plug 'vim-scripts/taglist.vim'
-Plug 'dcosson/ale' " Plug 'w0rp/ale' does not work with flow-proxy.sh
+Plug 'w0rp/ale'
 call plug#end()
 
 filetype plugin indent on
@@ -83,9 +83,15 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme = 'wombat'
 
 " ale ***********************************************************************
+let g:ale_enabled = 1
+nnoremap <leader>a :ALENextWrap<CR>
+
 set statusline+=%#warningmsg#
 set statusline+=%{ALEGetStatusLine()}
 set statusline+=%*
+
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_fix_on_save = 1
 
 let g:airline#extensions#ale#enable = 1
 let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
@@ -94,31 +100,19 @@ let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:airline_section_error = '%{ALEGetStatusLine()}'
 
-let g:ale_linters = { 'javascript': ['eslint'], 'jsx': ['eslint']  }
+let g:ale_linters = {
+\  'javascript': ['eslint'],
+\  'jsx': ['eslint'],
+\  'ruby': ['ruby', 'rubocop'],
+\}
+
+let g:ale_fixers = {
+\  'javascript': ['prettier', 'remove_trailing_lines'],
+\  'ruby': ['rubocop', 'remove_trailing_lines'],
+\}
+
+let g:ale_javascript_prettier_options = ' --parser babylon --single-quote --jsx-bracket-same-line --trailing-comma es5 --print-width 100'
 let g:ale_javascript_eslint_use_global = 1
-
-" I would do this as a local project .vimrc, but do not want to commit that to
-" shared repo:
-if getcwd() =~ '/fin/fin-core-beta$'
-    let g:ale_linters = { 'javascript': ['eslint', 'flow'], 'jsx': ['eslint', 'flow']  }
-    let g:ale_javascript_flow_use_relative_paths = 1
-    let g:ale_javascript_flow_executable = './dev-scripts/flow-proxy.sh'
-    let g:flow#enable = 0
-    let g:flow#omnifunc = 1
-    let g:flow#flowpath = './dev-scripts/flow-proxy.sh'
-    let g:javascript_plugin_flow = 1
-    let g:jsx_ext_required = 0
-end
-
-" temp shortcut while flow-proxy is broken
-nmap <leader>fm :FlowMake<CR>
-
-
-nnoremap <leader>a :ALENextWrap<CR>
-" [hack] Make sure the gutter is much darker black than the buffer background color
-" autocmd BufEnter,BufRead,BufWrite * highlight SignColumn ctermbg=16
-let g:ale_change_sign_column_color=1
-
 
 " Jump to last cursor position unless it's invalid or in an event handler
 autocmd BufReadPost *
@@ -200,24 +194,11 @@ autocmd Filetype scss setlocal ts=2 sts=2 sw=2
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
 
 " Javascript ****************************************************************
-let g:jsx_ext_required = 0
 autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
 autocmd FileType javascript setlocal formatprg=prettier\ --write\ --single-quote\ --jsx-bracket-same-line\ --parser\ babylon\ --trailing-comma\ es5\ --print-width\ 100
-function FormatPrettierJs()
-    let l:wv = winsaveview()
-    " ↓ this will call formatprg on the entire buffer ↓
-    silent exe "normal gggqG"
-    " If there was an error, undo replacing the entire buffer
-    if v:shell_error
-        undo
-    endif
-    call winrestview(l:wv)
-    redraw
-    " Old way was to run the buffer through a filter ↓
-    " silent %! prettier --single-quote --jsx-bracket-same-line --parser babylon --trailing-comma es5 --print-width 100
-endfunction
-" Run prettier on save (with Fin flags)
-autocmd BufWritePre *.js,*.jsx call FormatPrettierJs()
+
+let g:javascript_plugin_flow = 1
+let g:jsx_ext_required = 0
 
 " Golang  *******************************************************************
 set rtp+=/usr/local/go/misc/vim

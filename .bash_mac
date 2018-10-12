@@ -1,42 +1,29 @@
-# kortina mac specific bash profile settings
-bind '"\M-d": backward-kill-word'
+# adam mac specific bash profile settings
 
 ##################################################
 # aliases
 ##################################################
-alias flushdns='sudo dscacheutil -flushcache'
-alias SaveScreen='/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine'
-alias updatedb='sudo /usr/libexec/locate.updatedb'
 alias gg='git grep -n --color --heading --break'
 alias ga='git add .'
 alias gst='git status'
 alias gcm='git commit -m'
 alias gacm='git add . && git commit -m'
+alias beef='fd run-remote-shell prod --session-timeout 21600 --container-size large'
+alias dss='docker-sync stop && docker-sync start'
+alias fdp='fd prettier-changes'
 alias gp='git pull'
 alias gmm='git merge master'
 alias gcb='git checkout -b'
 alias gco='git checkout'
 alias tmux="TERM=screen-256color-bce tmux"
 export TERM="xterm-256color"
-alias t="bundle exec rspec --color"
 alias dk="docker-compose"
-alias pidawk="awk '{print \$2}'"
-alias v='pbpaste | vim -'
-export FZF_DEFAULT_COMMAND='ag -g ""'
 
 ##################################################
 # path adjustments
 ##################################################
 export PATH="~/.vim/:/usr/local:/usr/local/bin/ruby:$PATH"
-
-export GOPATH="$HOME/gopath"
-export PATH="$GOPATH/bin:$PATH"
-
-# Setting PATH for MacPython 2.5
-PATH="/Library/Frameworks/Python.framework/Versions/Current/bin:${PATH}"
-export PATH
-export PYTHONPATH="`brew --prefix`/lib/python2.7/site-packages:$PYTHONPATH"
-
+export PATH="$HOME/dotfiles/bin:$PATH"
 
 ##################################################
 # pretty bash prompt with git / svn branch name
@@ -52,8 +39,8 @@ function parse_svn_branch {
         svn info 2> /dev/null | grep URL | sed -e "s/.*\/\(.*\)$/(\1)/"
 }
 PS1="\n\
-\[\033[0;32m\]\u$DIM \[\033[0;37m\]@ \[\033[0;33m\]\h 
-\[\033[0;35m\]\$PWD \[\033[0;37m\]\$(parse_git_branch 2> /dev/null)\$(parse_svn_branch 2> /dev/null)$ " && export PS1
+\[\033[38;5;86m\]\u$DIM \[\033[0;37m\]@ \[\033[38;5;153m\]\h
+\[\033[38;5;231m\]\$PWD \[\033[0;37m\]\$(parse_git_branch 2> /dev/null)\$(parse_svn_branch 2> /dev/null)$ " && export PS1
 
 
 ##################################################
@@ -68,6 +55,7 @@ source_if_exists() {
 source_if_exists "`brew --prefix`/etc/bash_completion"
 source_if_exists "`brew --prefix`/etc/bash_completion.d/rails.bash"
 source_if_exists "$HOME/src/hub/etc/hub.bash_completion.sh"
+source_if_exists "/Users/adam/.dvm/dvm.sh"
 command -v gulp >/dev/null 2>&1  && eval "$(gulp --completion=bash)"
 
 ##################################################
@@ -86,12 +74,8 @@ source_if_exists "$HOME/.rbenv/completions/rbenv.bash"
 ##################################################
 # docker
 ##################################################
-# export DOCKER_HOST="tcp://192.168.66.10:2375"
-# export DOCKER_API_VERSION=1.21 # Error response from daemon: client is newer than server
 export FIN_HOME="$HOME/fin/fin-core-beta"
-export FIN_DOCKER_MEMORY=8
-export FIN_DOCKER_MEMORY_MIB=8192
-export FIN_SSH_USERNAME="andrew_kortina"
+export FIN_SSH_USERNAME="adam_jung"
 source_if_exists "$FIN_HOME/fin-dev/bashrc"
 
 fx() {
