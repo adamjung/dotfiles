@@ -17,7 +17,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'juvenn/mustache.vim'
 Plug 'kana/vim-fakeclip'
-Plug 'kortina/crosshair-focus.vim'
 Plug 'mileszs/ack.vim'
 Plug 'mxw/vim-jsx'
 Plug 'nvie/vim-flake8'
@@ -34,9 +33,6 @@ Plug 'tpope/vim-rails'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-ruby/vim-ruby'
-Plug 'vim-scripts/LanguageTool'
-Plug 'vim-scripts/fountain.vim'
-Plug 'vim-scripts/taglist.vim'
 Plug 'w0rp/ale'
 call plug#end()
 
@@ -49,13 +45,6 @@ let &runtimepath.=',~/.vim/bundle/ale'
 " use either , or \ as <Leader>
 let mapleader = ","
 nmap \ ,
-
-" source local customizations based on $USER name
-" eg, use ~/.vimrc.kortina for your local mods
-" and one common ~/.vimrc for team
-if filereadable($HOME . '/.vimrc.' . $USER)
-    exec ':source ' . $HOME . '/.vimrc.' . $USER
-endif
 
 " Basics ********************************************************************
 set backspace=indent,eol,start " fix backspace in vim 7
@@ -120,16 +109,6 @@ autocmd BufReadPost *
         \ exe "normal g`\"" |
     \ endif
 
-
-" Folding *******************************************************************
-" use spacebar to toggle folding
-nnoremap <silent> <Space> @=(foldlevel('.')?'zA':"\<Space>")<CR>
-vnoremap <Space> zf
-" it's way too hard to type zR/zM to expand/close all folds, so
-nnoremap 88 zR
-nnoremap 77 zM
-
-
 " Search ********************************************************************
 set tags=./tags;
 set grepprg=ag\ --vimgrep
@@ -140,7 +119,6 @@ let g:ackprg = 'ag --vimgrep'
 command H2v normal <C-w>t<C-w>H
 " switch from vertical to horizontal split
 command V2h normal <C-w>t<C-w>K
-
 
 " Completion ****************************************************************
 autocmd FileType python set omnifunc=pythoncomplete#Complete
@@ -170,10 +148,8 @@ let g:fzf_colors =
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
 
-
 " Ack.vim  ******************************************************************
 nmap <Leader>f :Ack 
-
 
 " Buffers *******************************************************************
 nmap <Leader>b :buffers<CR>
@@ -184,11 +160,9 @@ noremap <C-l> <C-W>l
 " make panes equal size
 noremap <Leader>w <C-W>=
 
-
 " CSS ***********************************************************************
 autocmd Filetype css setlocal ts=2 sts=2 sw=2
 autocmd Filetype scss setlocal ts=2 sts=2 sw=2
-
 
 " HTML  *********************************************************************
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
@@ -199,11 +173,6 @@ autocmd FileType javascript setlocal formatprg=prettier\ --write\ --single-quote
 
 let g:javascript_plugin_flow = 1
 let g:jsx_ext_required = 0
-
-" Golang  *******************************************************************
-set rtp+=/usr/local/go/misc/vim
-autocmd BufWritePost *.go :silent Fmt
-
 
 " Python ********************************************************************
 
@@ -218,82 +187,26 @@ noremap <Leader>d Oimport pdb; pdb.set_trace()<Esc>
 au FileType python setlocal formatprg=autopep8\ -
 au FileType python setlocal equalprg=autopep8\ -
 
-
 " Ruby **********************************************************************
 au BufRead,BufNewFile {Capfile,Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru,.caprc,.irbrc,irb_tempfile*} set ft=ruby
 autocmd Filetype ruby setlocal ts=2 sts=2 sw=2
 autocmd Filetype eruby setlocal ts=2 sts=2 sw=2
 
-
-" Git ***********************************************************************
-command! -complete=file -nargs=* Gstaged call s:RunShellCommand('git diff --staged')
-" review git diff in vertical split (fugitive doesn't seem to want to do this
-:command ReviewGitDiff normal :Gdiff<CR>:H2v<CR>
-nmap <Leader>dd :ReviewGitDiff<CR>
-
-
 " Vimux  ********************************************************************
 let g:vimux_ruby_file_relative_paths = 1
 let g:vimux_nose_options="--nologcapture"
 
-" vimux all languages
-map <Leader>ri :call VimuxInspectRunner()<CR>
-" e'X'it vimux
-map <Leader>rx :call VimuxCloseRunner()<CR>
-" last spec 'A'gain
-map <Leader>ra :call VimuxRunLastCommand()<CR>
 " vimux ruby
-" 'S'pecs 'S'uite
-autocmd FileType ruby   map <Leader>rs :call VimuxRunCommand("rspec")<CR>
-" 'B'uffer
 autocmd FileType ruby   map <Leader>rb :RunAllRubyTests<CR>
-" 'L'ine
-" autocmd FileType ruby   map <Leader>rl :RunRailsFocusedTest<CR>
 autocmd FileType ruby   map <Leader>rl :call VimuxRunCommand("clear; RSPEC_CLEAN_WITH_DELETION=1 RSPEC_TRUNCATE_AFTER_SUITE=1 RSPEC_SKIP_ELASTICSEARCH_SETUP=1 ./bin/rspec " . expand("%.") . ":" . line("."))<CR>
-" 'C'ontext
-autocmd FileType ruby   map <Leader>rc :RunRubyFocusedContext<CR>
-" vimux python
-autocmd FileType python map <Leader>rt :call VimuxRunNoseSetup()<CR>
-" 'S'pecs 'S'uite
-autocmd FileType python map <Leader>rs :call VimuxRunNoseAll()<CR>
-" 'B'uffer
 autocmd FileType python map <Leader>rb :call VimuxRunNoseFile()<CR>
-" 'L'ine
 autocmd FileType python map <Leader>rl :call VimuxRunNoseLine()<CR>
-" vimux js
-" In one tab in docker, start karma and leave it running with
-" xvfb-run $NODE_PATH/karma/bin/karma start --single-run=false
-" 'L'ine
-" autocmd FileType javascript map <Leader>rl :call VimuxRunCommand("clear; ./dev-scripts/karma-run-line-number.sh " . expand("%.") . ":" . line("."))<CR>
-autocmd FileType javascript map <Leader>rl :call VimuxRunCommand("clear; ./dev-scripts/karma-start-single-run-line-number.sh " . expand("%.") . ":" . line("."))<CR>
-" 'B'uffer
-" autocmd FileType javascript map <Leader>rb :call VimuxRunCommand("clear; $NODE_PATH/karma/bin/karma run -- --grep=")<CR>
 autocmd FileType javascript map <Leader>rb :call VimuxRunCommand("clear; xvfb-run ./node_modules/karma/bin/karma start --single-run=true --single-file=\"" . expand("%.") . "\"")<CR>
-
-
-" Grammar  ******************************************************************
-let g:languagetool_jar="`brew --prefix`/Cellar/languagetool/2.8/libexec/languagetool.jar"
-
-" Spelling ******************************************************************
-set spellfile=~/.vim/spell/en.utf-8.add
-nmap <Leader>s :setlocal spell! spelllang=en_us<CR>
+autocmd FileType javascript map <Leader>rl :call VimuxRunCommand("clear; ./dev-scripts/karma-start-single-run-line-number.sh " . expand("%.") . ":" . line("."))<CR>
 
 " Theme *********************************************************************
-set rtp+=$HOME/dotfiles/themes/tomorrow-theme/vim
+set rtp+=/Users/adam/dotfiles/themes/tomorrow-theme/vim
 colorscheme Tomorrow-Night
-
-
-" Crosshairs ****************************************************************
-function CrosshairsOn()
-    set cursorline
-    set cursorcolumn
-    hi CursorLine     guifg=NONE        guibg=black     gui=NONE      ctermfg=NONE        ctermbg=black            cterm=BOLD
-    hi CursorColumn   guifg=NONE        guibg=black     gui=NONE      ctermfg=NONE        ctermbg=black            cterm=BOLD
-endfunction
-nmap <Leader>l :call CrosshairsOn()<CR>
-
-autocmd BufRead,BufNewFile,BufDelete * :syntax on
-autocmd BufRead,BufNewFile,BufDelete * :call CrosshairsOn()
 
 " Shortcuts *****************************************************************
 imap <C-l> <C-r>"
@@ -302,12 +215,6 @@ nmap <Leader>e :!%:p<CR>
 
 " copy all to clipboard
 nmap <Leader>c ggVG"*y
-
-" open markdown preview
-nmap <Leader>p :Mm<CR>
-
-" clear search buffer
-map <Leader>/ :let @/ = ""<CR>
 
 " show keymappings in a searchable buffer
 function! s:ShowMaps()
@@ -328,30 +235,3 @@ function! s:ShowMaps()
 endfunction
 com! ShowMaps call s:ShowMaps()      " Enable :ShowMaps to call the function
 nmap <Leader>mm :ShowMaps<CR>
-
-" run ctags. Check for local / project versions first.
-nmap <Leader>cc :!(test -f ./ctags.sh && ./ctags.sh) \|\|  (test -f ./bin/ctags.sh && ./bin/ctags.sh) \|\| echo 'no ./ctags.sh or ./bin/ctags.sh found'<CR>
-
-" Fountain / Markdown  *********************************************************
-au BufRead,BufNewFile *.fountain set filetype=fountain
-autocmd BufNewFile,BufRead *.md,*.mkd,*.markdown,*.fountain set linebreak
-autocmd BufNewFile,BufRead *.md,*.mkd,*.markdown,*.fountain setlocal spell spelllang=en_us
-
-" fountain settings / hacks
-" fixes error when loading markdown-folding
-autocmd BufRead *.fountain let b:undo_ftplugin = '' 
-" use markdown folding of headers in fountain files
-autocmd BufRead *.fountain source ~/.vim/bundle/vim-markdown-folding/after/ftplugin/markdown/folding.vim
-
-" Experiments  *****************************************************************
-" autocmd VimEnter *   call LogCmdEvent("VimEnter")
-
-fun LogCmdEvent(eventName)
-    echom "LogCmdEvent: " . a:eventName
-endfun
-
-
-" allow for per-project configuration files (project .vimrc)
-set exrc
-" disable unsafe commands in your project-specific .vimrc files
-set secure
