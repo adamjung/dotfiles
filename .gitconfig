@@ -1,0 +1,5 @@
+[user]
+	name = adamjung
+	email = ajung91@hotmail.com
+[include]
+	path = /Users/atom_j/.gitconfig-shared
