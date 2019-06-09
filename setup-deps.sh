@@ -49,7 +49,8 @@ install_git_repo() {
 
 # 'fix' permissions on usr local setting current usr as owner
 # assumes only one person, you, is using your machine
-sudo chown -R "`id -u -n`:admin" /usr/local
+# sudo chown -R "`id -u -n`:admin" /usr/local
+sudo chown -R $(whoami) $(brew --prefix)/*
 
 ########################################
 # libs
@@ -59,7 +60,7 @@ sudo chown -R "`id -u -n`:admin" /usr/local
 brew_install CMake
 brew_install git # so that it has completion
 brew_install bash-completion
-brew tap homebrew/completions
+# brew tap homebrew/completions
 brew_install rails-completion
 brew_install git-lfs
 brew_install fzf
@@ -67,7 +68,7 @@ brew_install fswatch
 
 brew_install ctop
 brew_install ctags
-brew_install heroku
+brew_install heroku/brew/heroku
 brew_install python
 brew_install tmux
 brew_install languagetool
@@ -87,7 +88,7 @@ brew tap caskroom/versions
 brew cask install java
 
 # caffeine replacement
-brew cask install keepingyouawake
+# brew cask install keepingyouawake
 
 test -e /Applications/Cyberduck.app || brew cask install cyberduck
 
@@ -100,27 +101,27 @@ if ! command -v pip >/dev/null 2>&1; then
     # NB: cannot easy_install once you brew install python
     brew reinstall python
 fi
-pip install ansible
-pip install autopep8
-pip install boto
-pip install flake8
-pip install ipython
-pip install mock # python 2.7
-pip install nose
-pip install nose-run-line-number
-pip install watchdog
+pip3 install ansible
+pip3 install autopep8
+pip3 install boto
+pip3 install flake8
+pip3 install ipython
+pip3 install mock # python 2.7
+pip3 install nose
+pip3 install nose-run-line-number
+pip3 install watchdog
 
 ########################################
 # misc
 ########################################
 SRC_DIR="$HOME/src"
 test -e $SRC_DIR || mkdir -p $SRC_DIR
-if [ "`id -u -n`" = "kortina" ] && [ ! -f "$HOME/.bash_mac_private" ]; then echo "~/.bash_mac_private does not exist. exiting."; exit 1; fi;
+# if [ "`id -u -n`" = "kortina" ] && [ ! -f "$HOME/.bash_mac_private" ]; then echo "~/.bash_mac_private does not exist. exiting."; exit 1; fi;
 
 ########################################
 # various symlinks
 ########################################
-test -L "/Applications/Screen Sharing.app" || ln -s "/System/Library/CoreServices/Screen Sharing.app" "/Applications/Screen Sharing.app"
+# test -L "/Applications/Screen Sharing.app" || ln -s "/System/Library/CoreServices/Screen Sharing.app" "/Applications/Screen Sharing.app"
 
 ########################################
 # node modules

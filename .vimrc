@@ -1,13 +1,8 @@
 set nocompatible
 filetype off
 
-let use_you_complete_me = 0 " experiencing editor lag. try turning this off for now
-
 " vim-plug  *****************************************************************
 call plug#begin('~/.vim/plugged')
-if use_you_complete_me
-    Plug 'Valloric/YouCompleteMe'
-endif
 Plug 'benmills/vimux'
 Plug 'bogado/file-line'
 Plug 'dcosson/vimux-nose-test2'
@@ -17,11 +12,11 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'juvenn/mustache.vim'
 Plug 'kana/vim-fakeclip'
-Plug 'kortina/crosshair-focus.vim'
 Plug 'mileszs/ack.vim'
-Plug 'mxw/vim-jsx'
-Plug 'nvie/vim-flake8'
 Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'mattn/emmet-vim'
+Plug 'nvie/vim-flake8'
 Plug 'pgr0ss/vimux-ruby-test'
 Plug 'plasticboy/vim-markdown'
 Plug 'rkulla/pydiction'
@@ -35,16 +30,18 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vim-scripts/LanguageTool'
-Plug 'vim-scripts/fountain.vim'
 Plug 'vim-scripts/taglist.vim'
+Plug 'chriskempson/tomorrow-theme', { 'rtp': 'vim' }
+Plug 'jlanzarotta/bufexplorer'
 Plug 'w0rp/ale'
 call plug#end()
 
 filetype plugin indent on
+
 syntax on
 
 let &runtimepath.=',~/.vim/bundle/ale'
-:runtime! ~/.vim/
+" :runtime! ~/.vim/
 
 " use either , or \ as <Leader>
 let mapleader = ","
@@ -66,16 +63,15 @@ set sw=4
 set smarttab
 set incsearch
 set hlsearch
+set cursorline
 set ignorecase
 set smartcase
-set cursorline
-set cursorcolumn
 set title
 set ruler
 set showmode
 set showcmd
 set ai " Automatically set the indent of a new line (local to buffer)
-set si " smartindent    (local to buffer)
+set si
 
 " airline *******************************************************************
 set laststatus=2 " Show filename at bottom of buffer
@@ -87,7 +83,6 @@ let g:ale_enabled = 1
 nnoremap <leader>a :ALENextWrap<CR>
 
 set statusline+=%#warningmsg#
-set statusline+=%{ALEGetStatusLine()}
 set statusline+=%*
 
 let g:ale_lint_on_text_changed = 'normal'
@@ -98,7 +93,6 @@ let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:airline_section_error = '%{ALEGetStatusLine()}'
 
 let g:ale_linters = {
 \  'javascript': ['eslint'],
@@ -146,6 +140,7 @@ command V2h normal <C-w>t<C-w>K
 autocmd FileType python set omnifunc=pythoncomplete#Complete
 autocmd FileType python setlocal list
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd Filetype javascript set tabstop=2 softtabstop=2 shiftwidth=2
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
@@ -194,10 +189,7 @@ autocmd Filetype scss setlocal ts=2 sts=2 sw=2
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
 
 " Javascript ****************************************************************
-autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
 autocmd FileType javascript setlocal formatprg=prettier\ --write\ --single-quote\ --jsx-bracket-same-line\ --parser\ babylon\ --trailing-comma\ es5\ --print-width\ 100
-
-let g:javascript_plugin_flow = 1
 let g:jsx_ext_required = 0
 
 " Golang  *******************************************************************
@@ -220,6 +212,8 @@ au FileType python setlocal equalprg=autopep8\ -
 
 
 " Ruby **********************************************************************
+let $RUBYHOME=$HOME."/.rbenv/versions/2.5.1"
+set rubydll=$HOME/.rbenv/versions/2.5.1/lib/libruby.2.5.1.dylib
 au BufRead,BufNewFile {Capfile,Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru,.caprc,.irbrc,irb_tempfile*} set ft=ruby
 autocmd Filetype ruby setlocal ts=2 sts=2 sw=2
 autocmd Filetype eruby setlocal ts=2 sts=2 sw=2
@@ -228,7 +222,7 @@ autocmd Filetype eruby setlocal ts=2 sts=2 sw=2
 " Git ***********************************************************************
 command! -complete=file -nargs=* Gstaged call s:RunShellCommand('git diff --staged')
 " review git diff in vertical split (fugitive doesn't seem to want to do this
-:command ReviewGitDiff normal :Gdiff<CR>:H2v<CR>
+command ReviewGitDiff normal :Gdiff<CR>:H2v<CR>
 nmap <Leader>dd :ReviewGitDiff<CR>
 
 
@@ -279,21 +273,7 @@ set spellfile=~/.vim/spell/en.utf-8.add
 nmap <Leader>s :setlocal spell! spelllang=en_us<CR>
 
 " Theme *********************************************************************
-set rtp+=$HOME/dotfiles/themes/tomorrow-theme/vim
 colorscheme Tomorrow-Night
-
-
-" Crosshairs ****************************************************************
-function CrosshairsOn()
-    set cursorline
-    set cursorcolumn
-    hi CursorLine     guifg=NONE        guibg=black     gui=NONE      ctermfg=NONE        ctermbg=black            cterm=BOLD
-    hi CursorColumn   guifg=NONE        guibg=black     gui=NONE      ctermfg=NONE        ctermbg=black            cterm=BOLD
-endfunction
-nmap <Leader>l :call CrosshairsOn()<CR>
-
-autocmd BufRead,BufNewFile,BufDelete * :syntax on
-autocmd BufRead,BufNewFile,BufDelete * :call CrosshairsOn()
 
 " Shortcuts *****************************************************************
 imap <C-l> <C-r>"
@@ -309,39 +289,8 @@ nmap <Leader>p :Mm<CR>
 " clear search buffer
 map <Leader>/ :let @/ = ""<CR>
 
-" show keymappings in a searchable buffer
-function! s:ShowMaps()
-    let old_reg = getreg("a")          " save the current content of register a
-    let old_reg_type = getregtype("a") " save the type of the register as well
-    try
-        redir @a                           " redirect output to register a
-        " Get the list of all key mappings silently, satisfy "Press ENTER to continue"
-        silent map | call feedkeys("\<CR>")    
-        redir END                          " end output redirection
-        vnew                               " new buffer in vertical window
-        put a                              " put content of register
-        " Sort on 4th character column which is the key(s)
-        %!sort -k1.4,1.4
-    finally                              " Execute even if exception is raised
-        call setreg("a", old_reg, old_reg_type) " restore register a
-    endtry
-endfunction
-com! ShowMaps call s:ShowMaps()      " Enable :ShowMaps to call the function
-nmap <Leader>mm :ShowMaps<CR>
-
 " run ctags. Check for local / project versions first.
 nmap <Leader>cc :!(test -f ./ctags.sh && ./ctags.sh) \|\|  (test -f ./bin/ctags.sh && ./bin/ctags.sh) \|\| echo 'no ./ctags.sh or ./bin/ctags.sh found'<CR>
-
-" Fountain / Markdown  *********************************************************
-au BufRead,BufNewFile *.fountain set filetype=fountain
-autocmd BufNewFile,BufRead *.md,*.mkd,*.markdown,*.fountain set linebreak
-autocmd BufNewFile,BufRead *.md,*.mkd,*.markdown,*.fountain setlocal spell spelllang=en_us
-
-" fountain settings / hacks
-" fixes error when loading markdown-folding
-autocmd BufRead *.fountain let b:undo_ftplugin = '' 
-" use markdown folding of headers in fountain files
-autocmd BufRead *.fountain source ~/.vim/bundle/vim-markdown-folding/after/ftplugin/markdown/folding.vim
 
 " Experiments  *****************************************************************
 " autocmd VimEnter *   call LogCmdEvent("VimEnter")
@@ -349,7 +298,6 @@ autocmd BufRead *.fountain source ~/.vim/bundle/vim-markdown-folding/after/ftplu
 fun LogCmdEvent(eventName)
     echom "LogCmdEvent: " . a:eventName
 endfun
-
 
 " allow for per-project configuration files (project .vimrc)
 set exrc
