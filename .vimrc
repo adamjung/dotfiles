@@ -54,6 +54,7 @@ if filereadable($HOME . '/.vimrc.' . $USER)
     exec ':source ' . $HOME . '/.vimrc.' . $USER
 endif
 
+
 " Basics ********************************************************************
 set backspace=indent,eol,start " fix backspace in vim 7
 set cm=blowfish
@@ -72,6 +73,7 @@ set showmode
 set showcmd
 set ai " Automatically set the indent of a new line (local to buffer)
 set si
+
 
 " airline *******************************************************************
 set laststatus=2 " Show filename at bottom of buffer
@@ -303,3 +305,4 @@ endfun
 set exrc
 " disable unsafe commands in your project-specific .vimrc files
 set secure
+hi! CursorLineNr cterm=bold
