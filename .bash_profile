@@ -1,5 +1,7 @@
 alias ls='ls -G'
 alias grep='grep -i --color=auto'
+alias gg='git grep'
+alias gst='git status'
 export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:/opt/local/bin:$PATH"
 export PS1="\h:\w$ "
 export EDITOR=vim
