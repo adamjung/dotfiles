@@ -259,7 +259,8 @@ set spellfile=~/.vim/spell/en.utf-8.add
 nmap <Leader>s :setlocal spell! spelllang=en_us<CR>
 
 " Theme *********************************************************************
-colorscheme Tomorrow-Night
+" silent! so the first `vim +PlugInstall` (before the theme exists) doesn't error
+silent! colorscheme Tomorrow-Night
 
 " Shortcuts *****************************************************************
 imap <C-l> <C-r>"

@@ -62,19 +62,6 @@ brew_install nvm
 
 
 ########################################
-# pip
-########################################
-
-if ! command -v pip >/dev/null 2>&1; then
-    echo "re-installing python"
-    # NB: cannot easy_install once you brew install python
-    brew reinstall python
-fi
-pip3 install ansible
-pip3 install ipython
-pip3 install watchdog
-
-########################################
 # misc
 ########################################
 SRC_DIR="$HOME/src"
@@ -97,13 +84,13 @@ npm_install prettier
 # ruby gems
 ########################################
 test -e ~/.gemrc && grep -q "no-document" ~/.gemrc || echo "gem: --no-document" >> ~/.gemrc
-rbenv versions | grep -q "2\.3\.3" || rbenv install 2.3.3
-rbenv global 2.3.3
-# You may need to fix readline in irb by doing the following:
-# xcode-select --install
-# rbenv install -f 2.3.3 && RBENV_VERSION=2.3.3 gem pristine --all
+# latest stable MRI that ruby-build knows about
+RUBY_VERSION="$(rbenv install -l 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | tail -1)"
+rbenv versions --bare | grep -qx "$RUBY_VERSION" || rbenv install "$RUBY_VERSION"
+rbenv global "$RUBY_VERSION"
+# put rbenv's shims on PATH so `gem` below isn't the system ruby
+eval "$(rbenv init - bash)"
 
-gem install rb-readline
 gem install rubocop
 
 ########################################
