@@ -6,9 +6,6 @@ echo "##### $(basename $BASH_SOURCE) #####"
 
 DOTFILES_ROOT="`pwd`"
 
-# make sure git submodules are up to date
-cd $DOTFILES_ROOT && git submodule update --init
-
 ########################################
 # helpers
 ########################################
@@ -47,50 +44,22 @@ install_git_repo() {
 
 }
 
-# 'fix' permissions on usr local setting current usr as owner
-# assumes only one person, you, is using your machine
-# sudo chown -R "`id -u -n`:admin" /usr/local
-sudo chown -R $(whoami) $(brew --prefix)/*
-
 ########################################
 # libs
 ########################################
 # xcode-select --install # must be install via app store now
 
-brew_install CMake
-brew_install git # so that it has completion
-brew_install bash-completion
-# brew tap homebrew/completions
-brew_install rails-completion
-brew_install git-lfs
-brew_install fzf
-brew_install fswatch
+brew_install cmake
+brew_install git
 
-brew_install ctop
-brew_install ctags
-brew_install heroku/brew/heroku
 brew_install python
 brew_install tmux
 brew_install languagetool
-brew_install youtube-dl
-brew_install the_silver_searcher # WAY faster than ack
 brew_install rbenv
-brew install reattach-to-user-namespace
-brew_install vim # need vim8 for ale
-brew_install yarn
-brew tap caskroom/cask
+brew_install vim
+brew_install node
+brew_install nvm
 
-
-########################################
-# java (for languagetool)
-########################################
-brew tap caskroom/versions
-brew cask install java
-
-# caffeine replacement
-# brew cask install keepingyouawake
-
-test -e /Applications/Cyberduck.app || brew cask install cyberduck
 
 ########################################
 # pip
@@ -102,13 +71,7 @@ if ! command -v pip >/dev/null 2>&1; then
     brew reinstall python
 fi
 pip3 install ansible
-pip3 install autopep8
-pip3 install boto
-pip3 install flake8
 pip3 install ipython
-pip3 install mock # python 2.7
-pip3 install nose
-pip3 install nose-run-line-number
 pip3 install watchdog
 
 ########################################
@@ -116,7 +79,6 @@ pip3 install watchdog
 ########################################
 SRC_DIR="$HOME/src"
 test -e $SRC_DIR || mkdir -p $SRC_DIR
-# if [ "`id -u -n`" = "kortina" ] && [ ! -f "$HOME/.bash_mac_private" ]; then echo "~/.bash_mac_private does not exist. exiting."; exit 1; fi;
 
 ########################################
 # various symlinks
@@ -129,12 +91,7 @@ test -e $SRC_DIR || mkdir -p $SRC_DIR
 brew_install node
 
 npm_install eslint
-npm_install eslint-plugin-react
-npm_install eslint-plugin-flowtype
-npm_install babel-eslint
-npm_install livedown
 npm_install prettier
-
 
 ########################################
 # ruby gems
@@ -145,10 +102,7 @@ rbenv global 2.3.3
 # You may need to fix readline in irb by doing the following:
 # xcode-select --install
 # rbenv install -f 2.3.3 && RBENV_VERSION=2.3.3 gem pristine --all
-gem install docker-sync
-gem install cocoapods
-gem install overcommit
-gem install teamocil
+
 gem install rb-readline
 gem install rubocop
 

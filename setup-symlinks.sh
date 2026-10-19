@@ -3,13 +3,11 @@ set -e
 echo "##### $(basename $BASH_SOURCE) #####"
 
 DOTFILES_ROOT="`pwd`"
-DONT_SYMLINK=("." ".." ".git" ".gitmodules")
-
 for f in `ls -a | grep "^\." | grep -v "\.swp$" | grep -v "DS_Store"`; do 
     if [ "$f" = "." ] \
         || [ "$f" = ".." ] \
         || [ "$f" = ".git" ] \
-        || [ "$f" = ".gitmodules" ]; then 
+        || [ "$f" = ".gitconfig" ]; then 
             echo "skipping symlink $f"
     else
         SYM_FILE="$HOME/$f"

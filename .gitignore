@@ -20,5 +20,4 @@ ehthumbs.db
 madeXVim
 .vim/.netrwhist
 .vim/plugged/**
-s3screenshots.sh
 node_modules/

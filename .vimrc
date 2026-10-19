@@ -7,14 +7,13 @@ Plug 'benmills/vimux'
 Plug 'bogado/file-line'
 Plug 'dcosson/vimux-nose-test2'
 Plug 'flowtype/vim-flow'
-Plug 'jnwhiteh/vim-golang'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'juvenn/mustache.vim'
 Plug 'kana/vim-fakeclip'
 Plug 'mileszs/ack.vim'
 Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
+Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'mattn/emmet-vim'
 Plug 'nvie/vim-flake8'
 Plug 'pgr0ss/vimux-ruby-test'
@@ -33,22 +32,19 @@ Plug 'vim-scripts/LanguageTool'
 Plug 'vim-scripts/taglist.vim'
 Plug 'chriskempson/tomorrow-theme', { 'rtp': 'vim' }
 Plug 'jlanzarotta/bufexplorer'
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 call plug#end()
 
 filetype plugin indent on
 
 syntax on
 
-let &runtimepath.=',~/.vim/bundle/ale'
-" :runtime! ~/.vim/
-
 " use either , or \ as <Leader>
 let mapleader = ","
 nmap \ ,
 
 " source local customizations based on $USER name
-" eg, use ~/.vimrc.kortina for your local mods
+" eg, use ~/.vimrc.jungmoney for your local mods
 " and one common ~/.vimrc for team
 if filereadable($HOME . '/.vimrc.' . $USER)
     exec ':source ' . $HOME . '/.vimrc.' . $USER
@@ -56,8 +52,7 @@ endif
 
 
 " Basics ********************************************************************
-set backspace=indent,eol,start " fix backspace in vim 7
-set cm=blowfish
+set backspace=indent,eol,start
 set number
 set et
 set sw=4
@@ -84,14 +79,10 @@ let g:airline_theme = 'wombat'
 let g:ale_enabled = 1
 nnoremap <leader>a :ALENextWrap<CR>
 
-set statusline+=%#warningmsg#
-set statusline+=%*
-
 let g:ale_lint_on_text_changed = 'normal'
 let g:ale_fix_on_save = 1
 
 let g:airline#extensions#ale#enable = 1
-let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
@@ -107,7 +98,7 @@ let g:ale_fixers = {
 \  'ruby': ['rubocop', 'remove_trailing_lines'],
 \}
 
-let g:ale_javascript_prettier_options = ' --parser babylon --single-quote --jsx-bracket-same-line --trailing-comma es5 --print-width 100'
+let g:ale_javascript_prettier_options = ' --single-quote --bracket-same-line --trailing-comma es5 --print-width 100'
 let g:ale_javascript_eslint_use_global = 1
 
 " Jump to last cursor position unless it's invalid or in an event handler
@@ -128,9 +119,11 @@ nnoremap 77 zM
 
 " Search ********************************************************************
 set tags=./tags;
-set grepprg=ag\ --vimgrep
-set grepformat=%f:%l:%c:%m
-let g:ackprg = 'ag --vimgrep'
+if executable('rg')
+    set grepprg=rg\ --vimgrep\ --smart-case
+    set grepformat=%f:%l:%c:%m
+    let g:ackprg = 'rg --vimgrep --smart-case'
+endif
 
 " switch from horizontal to vertical split
 command H2v normal <C-w>t<C-w>H
@@ -139,14 +132,13 @@ command V2h normal <C-w>t<C-w>K
 
 
 " Completion ****************************************************************
-autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType python set omnifunc=python3complete#Complete
 autocmd FileType python setlocal list
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd Filetype javascript set tabstop=2 softtabstop=2 shiftwidth=2
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
-let g:ctrlp_working_path_mode = 0
 set wildignore+=*/node_modules/*
 
 " fzf ***********************************************************************
@@ -191,12 +183,7 @@ autocmd Filetype scss setlocal ts=2 sts=2 sw=2
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
 
 " Javascript ****************************************************************
-autocmd FileType javascript setlocal formatprg=prettier\ --write\ --single-quote\ --jsx-bracket-same-line\ --parser\ babylon\ --trailing-comma\ es5\ --print-width\ 100
-let g:jsx_ext_required = 0
-
-" Golang  *******************************************************************
-set rtp+=/usr/local/go/misc/vim
-autocmd BufWritePost *.go :silent Fmt
+autocmd FileType javascript setlocal formatprg=prettier\ --stdin-filepath\ %\ --single-quote\ --bracket-same-line\ --trailing-comma\ es5\ --print-width\ 100
 
 
 " Python ********************************************************************
@@ -207,25 +194,21 @@ autocmd BufRead *.py inoremap # X<c-h>#
 autocmd BufRead *.py set foldmethod=indent
 autocmd BufRead *.py set foldlevel=1
 " configure pydiction
-let g:pydiction_location = '~/.vim/bundle/pydiction/complete-dict'
+let g:pydiction_location = '~/.vim/plugged/pydiction/complete-dict'
 noremap <Leader>d Oimport pdb; pdb.set_trace()<Esc>
 au FileType python setlocal formatprg=autopep8\ -
 au FileType python setlocal equalprg=autopep8\ -
 
 
 " Ruby **********************************************************************
-let $RUBYHOME=$HOME."/.rbenv/versions/2.5.1"
-set rubydll=$HOME/.rbenv/versions/2.5.1/lib/libruby.2.5.1.dylib
 au BufRead,BufNewFile {Capfile,Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru,.caprc,.irbrc,irb_tempfile*} set ft=ruby
 autocmd Filetype ruby setlocal ts=2 sts=2 sw=2
 autocmd Filetype eruby setlocal ts=2 sts=2 sw=2
 
 
 " Git ***********************************************************************
-command! -complete=file -nargs=* Gstaged call s:RunShellCommand('git diff --staged')
-" review git diff in vertical split (fugitive doesn't seem to want to do this
-command ReviewGitDiff normal :Gdiff<CR>:H2v<CR>
-nmap <Leader>dd :ReviewGitDiff<CR>
+" review git diff in a vertical split
+nmap <Leader>dd :Gvdiffsplit<CR>
 
 
 " Vimux  ********************************************************************
@@ -268,7 +251,8 @@ autocmd FileType javascript map <Leader>rb :call VimuxRunCommand("clear; xvfb-ru
 
 
 " Grammar  ******************************************************************
-let g:languagetool_jar="`brew --prefix`/Cellar/languagetool/2.8/libexec/languagetool.jar"
+let s:brew_prefix = empty($HOMEBREW_PREFIX) ? '/opt/homebrew' : $HOMEBREW_PREFIX
+let g:languagetool_jar = get(glob(s:brew_prefix . '/Cellar/languagetool/*/libexec/languagetool-commandline.jar', 0, 1), -1, '')
 
 " Spelling ******************************************************************
 set spellfile=~/.vim/spell/en.utf-8.add
@@ -293,13 +277,6 @@ map <Leader>/ :let @/ = ""<CR>
 
 " run ctags. Check for local / project versions first.
 nmap <Leader>cc :!(test -f ./ctags.sh && ./ctags.sh) \|\|  (test -f ./bin/ctags.sh && ./bin/ctags.sh) \|\| echo 'no ./ctags.sh or ./bin/ctags.sh found'<CR>
-
-" Experiments  *****************************************************************
-" autocmd VimEnter *   call LogCmdEvent("VimEnter")
-
-fun LogCmdEvent(eventName)
-    echom "LogCmdEvent: " . a:eventName
-endfun
 
 " allow for per-project configuration files (project .vimrc)
 set exrc

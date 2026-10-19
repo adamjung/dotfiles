@@ -21,7 +21,6 @@
   tool = opendiff
 [core]
 	excludesfile = ~/.gitignore
-  legacyheaders = false
 [repack]
   usedeltabaseoffset = true
 

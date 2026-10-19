@@ -1,19 +1,15 @@
 ### Installation
 
     cd ~
-    git clone https://github.com/kortina/dotfiles.git
+    cd ~/code
+    git clone https://github.com/adamjung/dotfiles.git
     cd dotfiles
-    git submodule update --init
     ./setup.sh
-
-    cd .vim/plugged/YouCompleteMe/ && ./install.py --tern-completer; cd -
 
 You should see the following output on sucessful install:
     
     ✅ ✅ ✅
     🎉 🎉 🎉
-
-NB: If you want s3screenshots, you will need to install following the [README](https://github.com/kortina/dotfiles/tree/master/s3screenshots)
 
 `setup.sh` will run all of the following setup scripts: 
 
@@ -24,24 +20,12 @@ NB: If you want s3screenshots, you will need to install following the [README](h
 
 Each of this scripts can also be run independently (which may be faster for making small changes).
 
-### FAQ
-
-* If you get a permissions error, I recommened setting your user as owner of `/usr/local/`:
-
-```
-sudo chown -R "`id -u -n`:admin" /usr/local
-```
-
 ### Other
 
-* Must install Xcode before running `./setup.sh`
+* Install the Xcode command line tools (`xcode-select --install`) before running `./setup.sh`
 
 ### Themes
 
     # install terminal theme
     open "themes/tomorrow-theme/OS X Terminal/Tomorrow Night.terminal"
 
-
-### Questions
-
-If something is unclear, please add an issue: https://github.com/kortina/dotfiles/issues
